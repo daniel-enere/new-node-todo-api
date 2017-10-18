@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/TodoApp');
+mongoose.connect(process.env.MONGO_URI);
+
 
 // // Connection URL
 // var url = 'mongodb://localhost:27017/myproject';
@@ -18,3 +19,4 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/TodoApp');
 
 module.exports = {mongoose};
 // {MongoClient}
+// process.env.NODE_ENV === 'test'
