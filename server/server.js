@@ -14,18 +14,33 @@ var app = express();
 
 app.use(bodyParser.json());
 
-app.post('/users',(req, res) => {
-  var user = new User({
-    email: req.body.email
-  });
+//Users
+// app.post('/users',(req, res) => {
+//   var user = new User({
+//     email: req.body.email
+//   });
+//
+//   user.save().then((doc) => {
+//     res.send(doc);
+//   }, (e) => {
+//     res.status(400).send(e);
+//   })
+// });
 
-  user.save().then((doc) => {
-    res.send(doc);
-  }, (e) => {
+app.post('/users', (req, res) => {
+  var body = _.pick(req.body, ['email', 'password']);
+  var user = new User(body);
+
+  user.save().then(() => {
+    return  user.generateAuthToken();
+  }).then((token) => {
+    res.header('x-auth', token).send(user);
+  }).catch((e) => {
     res.status(400).send(e);
   })
 });
 
+//Todos
 app.post('/todos',(req, res) => {
   var todo = new Todo({
     text: req.body.text
