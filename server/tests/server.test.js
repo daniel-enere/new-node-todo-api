@@ -4,22 +4,13 @@ const {ObjectID} = require('mongodb');
 
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
+const {User} = require('./../models/users');
+const {todos, popTodos, users, popUsers} = require('./seed/seed');
 
-const todos = [{
-  _id: new ObjectID(),
-  text: 'Test todo 1'
-}, {
-  _id: new ObjectID(),
-  text: 'Test todo 2',
-  completed: true,
-  completedAt:1234
-}];
+beforeEach(popUsers);
 
-beforeEach((done) => {
-  Todo.remove({}).then(() => {
-    return Todo.insertMany(todos);
-  }).then(() => done());
-});
+beforeEach(popTodos);
+
 // beforeEach((done) => {
 //   Todo.remove({}).then(() => done());
 // });
@@ -177,5 +168,75 @@ describe('PATCH /todos/:id', () =>{
         expect(res.body.todo.completedAt).toNotExist();
       })
       .end(done)
+  });
+});
+
+describe('GET /users/me', () => {
+  it('authenticate users', (done) => {
+    request(app)
+      .get('/users/me')
+      .set('x-auth', users[0].tokens[0].token)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.email).toBe(users[0].email);
+        expect(res.body._id).toBe(users[0]._id.toHexString());
+      })
+      .end(done)
+  });
+  it('Deny user', (done) => {
+    request(app)
+      .get('/users/me')
+      .set('x-auth', users[0].tokens[0].token + '1')
+      .expect(401)
+      .expect((res) => {
+        expect(res.body).toEqual({});
+      })
+      .end(done)
+  });
+});
+
+describe('POST /users', () =>{
+  it('Deny login', (done) => {
+    request(app)
+      .post('/users')
+      .send({email:'dan', password: 'qwd'})
+      .expect(400)
+      .end(done);
+  });
+
+  it('Allow login', (done) => {
+    var email = 'enam@email.com'
+    var password = '123asd';
+
+    request(app)
+      .post('/users')
+      .send({email, password})
+      .expect(200)
+      .expect((res) => {
+        expect(res.headers['x-auth']).toExist();
+        expect(res.body._id).toExist();
+        expect(res.body.email).toBe(email);
+      })
+      .end((err) => {
+        if (err) {
+          return done(err);
+        }
+        User.findOne({email}).then((user) =>{
+          expect(user).toExist();
+          expect(user.password).toNotBe(password);
+          done();
+        });
+      });
+  });
+
+  it('Deny login due to duplicate email', (done) => {
+    var email = 'daniel@email.com'
+    var password = '123asd';
+
+    request(app)
+      .post('/users')
+      .send({email, password})
+      .expect(400)
+      .end(done);
   });
 });
