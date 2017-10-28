@@ -17,18 +17,24 @@ const users = [{
 }, {
   _id: userTwoId,
   email: 'Ife@gmail.com',
-  password: 'TwoPass'
+  password: 'TwoPass',
+  tokens: [{
+    access: 'auth',
+    token: jwt.sign({_id:userTwoId, access: 'auth'}, 'abc123').toString()
+  }]
 }];
 
 
 const todos = [{
   _id: new ObjectID(),
-  text: 'Test todo 1'
+  text: 'Test todo 1',
+  _author: userOneId
 }, {
   _id: new ObjectID(),
   text: 'Test todo 2',
   completed: true,
-  completedAt:1234
+  completedAt:1234,
+  _author: userTwoId
 }];
 
 const popTodos = (done) => {
