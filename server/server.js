@@ -145,6 +145,7 @@ app.patch('/todos/:id', authenticate, (req, res) => {
     body.completedAt = null;
   }
 
+//queries the database
   Todo.findOneAndUpdate({
     _id: id,
     _author: req.user._id
