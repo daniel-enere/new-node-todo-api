@@ -66,8 +66,6 @@ describe('GET /todos', () => {
       .set('x-auth', users[0].tokens[0].token)
       .expect(200)
       .expect((res) => {
-        //Unable to run mocha at the moment; test assertion at a later time
-        expect(res.body.todos._author).toBe(users[0]._id)
         expect(res.body.todos.length).toBe(1);
       })
       .end(done);
@@ -76,14 +74,17 @@ describe('GET /todos', () => {
 
 describe('GET /todos/:id', () => {
   it('should get todos', (done) => {
+    // console.log( todos ); process.exit();
     request(app)
       .get(`/todos/${todos[0]._id.toHexString()}`)
       .set('x-auth', users[0].tokens[0].token)
-      .expect(200)
+      .expect(200) //got 404
       .expect((res) => {
         expect(res.body.todo.text).toBe(todos[0].text);
       })
       .end(done);
+      console.log(todos[0]._id.toHexString());
+      console.log(users[0].tokens[0].token)
   });
 
   it('should not get todos for other user', (done) => {
@@ -172,7 +173,7 @@ describe('DELETE /Todos/:id', () => {
   });
 });
 
-describe('PATCH /todos/:id', () =>{
+describe('PATCH /todos/:id', () => {
   it('should update the todo', (done) => {
     var HexId = todos[0]._id.toHexString();
     var text = 'Testing for server';
@@ -183,7 +184,7 @@ describe('PATCH /todos/:id', () =>{
         completed: true,
         text
       })
-      .expect(200)
+      .expect(200) //404
       .expect((res) => {
         expect(res.body.todo.text).toBe(text);
         expect(res.body.todo.completed).toBe(true);
@@ -204,9 +205,6 @@ describe('PATCH /todos/:id', () =>{
         text
       })
       .expect(404)
-      .expect((res) => {
-        expect(res.body.todo.text).toNotExist(); //Unable to test at the moment; might not work due to undefined object
-      })
       .end(done)
   });
 
@@ -221,7 +219,7 @@ describe('PATCH /todos/:id', () =>{
         completed: false,
         text
       })
-      .expect(200)
+      .expect(200) //404
       .expect((res) => {
         expect(res.body.todo.text).toBe(text);
         expect(res.body.todo.completed).toBe(false);
