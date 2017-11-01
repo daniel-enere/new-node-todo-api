@@ -96,7 +96,7 @@ app.get('/todos/:id', authenticate, (req, res) => {
   var id = req.params.id;
 
   if (!ObjectID.isValid(id)) {
-    console.error('caught'  + id); throw new Error('this is bad'); //added by others
+    // console.error('caught'  + id); throw new Error('this is bad'); //added by others
     return res.status(404).send();
   }
 
