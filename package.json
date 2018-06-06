@@ -18,7 +18,7 @@
     "body-parser": "^1.18.2",
     "crypto-js": "^3.1.8",
     "express": "^4.16.3",
-    "jsonwebtoken": "^7.4.3",
+    "jsonwebtoken": "^8.2.2",
     "lodash": "^4.17.5",
     "mongodb": "^2.2.35",
     "mongoose": "^4.13.12",
@@ -26,8 +26,8 @@
   },
   "devDependencies": {
     "expect": "^21.2.1",
-    "mocha": "^3.5.3",
-    "nodemon": "^1.17.3",
-    "supertest": "^2.0.1"
+    "mocha": "^5.2.0",
+    "nodemon": "^1.17.5",
+    "supertest": "^3.1.0"
   }
 }
